@@ -1,0 +1,833 @@
+@font-face {
+  font-family:'Big Shoulders';
+  src:url('fonts/BigShoulders.woff2') format('woff2');
+  font-weight:100 900;
+  font-display:swap
+}
+@font-face {
+  font-family:'DSEG7';
+  src:url('fonts/DSEG7Classic-Bold.woff2') format('woff2');
+  font-weight:700;
+  font-display:block
+}
+:root {
+  color-scheme:dark;
+  /* Grafito cálido + óxido: la planta es de tierra y metal, no un SaaS */
+  --fondo:#15120f;
+  --lienzo:#181410;
+  --panel:#1c1814;
+  --boton:#2a241e;
+  --boton-hover:#362e26;
+  --punteado:#2a231c;
+  --texto:#ede6da;
+  --cifra:#f4ecdf;
+  --secundario:#a39888;
+  --suave:#cfc5b5;
+  --oxido:#8c4a2b;
+  --pared:#6b4a34;
+  --ambar:#f2a900;
+  --verde:#6a994e;
+  --verde-texto:#9cc57f;
+  --verde-claro:#a9d08e;
+  --ocre:#c9821a;
+  --ocre-texto:#e5a443;
+  --rojo:#d64500;
+  --rojo-texto:#ff8a57;
+  --rojo-cifra:#ff7a3d;
+  --cian:#2e8b8b;
+  --cian-texto:#5fb3ae
+}
+* {
+  box-sizing:border-box
+}
+body {
+  margin:0;
+  background:var(--fondo);
+  color:var(--texto);
+  font-family:'Big Shoulders','Arial Narrow',sans-serif
+}
+main {
+  height:100vh;
+  height:100dvh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden
+}
+h1,h2,p {
+  margin:0
+}
+.digitos {
+  font-family:'DSEG7',Consolas,monospace;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:.02em
+}
+
+/* ---------- Cabecera ---------- */
+header {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px 32px;
+  padding:20px 36px 14px
+}
+.marca {
+  display:flex;
+  align-items:baseline;
+  flex-wrap:wrap;
+  gap:6px 22px
+}
+h1 {
+  font-size:46px;
+  font-weight:800;
+  line-height:1;
+  letter-spacing:.01em
+}
+h1 span {
+  color:var(--ambar)
+}
+.marca p {
+  font-size:19px;
+  font-weight:500;
+  color:var(--secundario)
+}
+.cabecera-derecha {
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:16px 28px
+}
+.enlace {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:6px
+}
+#reloj {
+  font-size:22px;
+  color:var(--suave)
+}
+#conexion {
+  font-size:16px;
+  font-weight:600;
+  color:var(--verde-texto)
+}
+.desconectado #conexion {
+  color:var(--rojo-texto)
+}
+
+/* Placa de modo: esquina cortada como una chapa atornillada al panel */
+.placa {
+  display:flex;
+  align-items:stretch;
+  min-width:330px;
+  background:var(--boton);
+  clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,0 100%);
+  transition:background .4s
+}
+.franja {
+  width:14px;
+  flex-shrink:0;
+  background:var(--ambar)
+}
+.placa-contenido {
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:12px 30px 12px 18px
+}
+.placa-contenido div {
+  display:flex;
+  flex-direction:column;
+  gap:2px
+}
+#modo-titulo {
+  font-size:30px;
+  font-weight:800;
+  line-height:1
+}
+#modo-detalle {
+  font-size:16px;
+  font-weight:500;
+  color:var(--suave)
+}
+.candado {
+  width:34px;
+  height:34px;
+  fill:none;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  display:none
+}
+.placa.inseguro {
+  background:#3a1a0c
+}
+.placa.inseguro .franja {
+  background:repeating-linear-gradient(-45deg,var(--rojo) 0 7px,var(--fondo) 7px 14px)
+}
+.placa.inseguro #modo-titulo {
+  color:var(--rojo-texto)
+}
+.placa.inseguro .candado-abierto {
+  display:block;
+  stroke:var(--rojo-texto)
+}
+.placa.protegido {
+  background:#1d2a17
+}
+.placa.protegido .franja {
+  background:var(--verde)
+}
+.placa.protegido #modo-titulo {
+  color:var(--verde-claro)
+}
+.placa.protegido .candado-cerrado {
+  display:block;
+  stroke:var(--verde-claro)
+}
+.placa.latido {
+  animation:latido 1.2s ease-in-out infinite
+}
+.placa.rechazo {
+  animation:rechazo 2.4s ease-out 1
+}
+
+/* ---------- Avisos ---------- */
+.aviso {
+  margin:0 36px 10px;
+  padding:12px 18px;
+  background:#3a1a0c;
+  color:var(--rojo-texto);
+  font-size:20px;
+  font-weight:700
+}
+.alerta-ataque {
+  margin:0 36px 10px;
+  display:flex;
+  align-items:stretch;
+  background:#b33a00;
+  color:#fff
+}
+.alerta-ataque[hidden],.aviso[hidden] {
+  display:none
+}
+.franja-peligro {
+  width:22px;
+  flex-shrink:0;
+  background:repeating-linear-gradient(-45deg,var(--ambar) 0 10px,var(--fondo) 10px 20px)
+}
+.alerta-ataque p {
+  padding:12px 20px;
+  font-size:22px;
+  font-weight:700;
+  line-height:1.2
+}
+.vineta {
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:40;
+  display:none;
+  box-shadow:inset 0 0 0 5px var(--rojo),inset 0 0 180px 40px rgba(214,69,0,.42);
+  animation:vineta 1.4s ease-in-out infinite
+}
+.alarma-global .vineta {
+  display:block
+}
+
+/* ---------- Cuerpo: sinóptico + registro ---------- */
+.cuerpo {
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  gap:24px;
+  padding:0 36px 20px
+}
+.sinoptico {
+  flex:1 1 0;
+  min-width:0;
+  /* El diagrama se dimensiona por el alto disponible para no desbordar el proyector */
+  container-type:size;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  border-radius:4px;
+  background-color:var(--lienzo);
+  background-image:radial-gradient(var(--punteado) 1.2px,transparent 1.2px);
+  background-size:26px 26px;
+  transition:opacity .4s
+}
+.lienzo {
+  position:relative;
+  width:min(100cqw,100cqh * 1.5625);
+  aspect-ratio:1000 / 640;
+  container-type:inline-size
+}
+.lienzo svg {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  overflow:visible
+}
+.desconectado .sinoptico {
+  opacity:.55
+}
+.desconectado .sinoptico * {
+  animation-play-state:paused!important
+}
+
+/* Tuberías */
+.tubo {
+  fill:none;
+  stroke:#3b2a1f;
+  stroke-width:13;
+  stroke-linecap:round;
+  stroke-linejoin:round
+}
+.tubo-alma {
+  fill:none;
+  stroke:var(--oxido);
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  opacity:.55
+}
+.flujo {
+  fill:none;
+  stroke-width:3.5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-dasharray:3 15;
+  animation:fluir 1.1s linear infinite
+}
+.flujo-gas {
+  stroke:var(--cian-texto)
+}
+.flujo-sustrato {
+  stroke:var(--ocre);
+  stroke-dasharray:6 18;
+  animation-duration:2.6s
+}
+.flujo-alivio {
+  stroke:var(--rojo-texto);
+  stroke-width:4.5;
+  stroke-dasharray:8 10;
+  animation-duration:.45s;
+  display:none
+}
+.boca {
+  fill:none;
+  stroke:var(--pared);
+  stroke-width:3;
+  stroke-linecap:round
+}
+.pluma {
+  display:none
+}
+.pluma circle {
+  fill:var(--rojo-texto);
+  opacity:0;
+  transform-box:fill-box;
+  animation:pluma 1.8s ease-out infinite
+}
+.pluma .p2 { animation-delay:.45s }
+.pluma .p3 { animation-delay:.9s }
+.pluma .p4 { animation-delay:1.35s }
+.valvula-abierta .flujo-alivio,.valvula-abierta .pluma {
+  display:inline
+}
+
+/* Biodigestor */
+.pared {
+  fill:#1e1914;
+  stroke:var(--pared);
+  stroke-width:4
+}
+.pared-brillo {
+  fill:none;
+  stroke:#a8673f;
+  stroke-width:1.5;
+  opacity:.5
+}
+.espacio-gas {
+  fill:var(--cian);
+  opacity:.14;
+  transition:opacity 1s
+}
+.sustrato {
+  fill:#4a3920
+}
+.sustrato-superficie {
+  fill:none;
+  stroke:#8a6a35;
+  stroke-width:2
+}
+.ola {
+  animation:ola 6s linear infinite
+}
+.burbuja-gas {
+  fill:#8fd0c9;
+  opacity:0;
+  transform-box:fill-box;
+  animation:subir 5.5s ease-in infinite
+}
+.b2 { animation-delay:1.2s; animation-duration:6.2s }
+.b3 { animation-delay:2.5s; animation-duration:4.8s }
+.b4 { animation-delay:3.4s; animation-duration:6.8s }
+.b5 { animation-delay:.6s; animation-duration:5.1s }
+.b6 { animation-delay:4.2s; animation-duration:5.9s }
+.b7 { animation-delay:1.9s; animation-duration:7.2s }
+
+/* Agitador */
+.eje {
+  stroke:#9a8a75;
+  stroke-width:4;
+  stroke-linecap:round
+}
+.aspas {
+  fill:#b9a88f;
+  transform-box:fill-box;
+  transform-origin:center;
+  animation:aspas .9s linear infinite
+}
+.motor {
+  fill:var(--fondo);
+  stroke:var(--verde-texto);
+  stroke-width:3
+}
+.motor-letra {
+  fill:var(--texto);
+  font:700 17px 'Big Shoulders',sans-serif;
+  text-anchor:middle
+}
+.agitador-detenido .aspas {
+  animation:none;
+  fill:#6e6252
+}
+.agitador-detenido .motor {
+  stroke:var(--ocre-texto)
+}
+
+/* Instrumentos ISA */
+.instrumento {
+  fill:var(--fondo);
+  stroke:#b5a792;
+  stroke-width:2.5;
+  transition:stroke .4s
+}
+.instrumento.advertencia {
+  stroke:var(--ocre-texto)
+}
+.instrumento.alarma {
+  stroke:var(--rojo-cifra);
+  stroke-width:3.5;
+  animation:parpadeo 1.6s ease-in-out infinite
+}
+.instrumento-texto {
+  fill:var(--texto);
+  font:700 15px 'Big Shoulders',sans-serif;
+  text-anchor:middle;
+  letter-spacing:.04em
+}
+.instrumento-numero {
+  fill:var(--secundario);
+  font:600 13px 'Big Shoulders',sans-serif;
+  text-anchor:middle
+}
+.senal {
+  stroke:var(--secundario);
+  stroke-width:1.5;
+  stroke-dasharray:4 4
+}
+
+/* XV-201 */
+.valvula-cuerpo {
+  fill:var(--verde);
+  stroke:var(--fondo);
+  stroke-width:2;
+  transition:fill .3s
+}
+.valvula-actuador {
+  fill:var(--boton);
+  stroke:#b5a792;
+  stroke-width:2
+}
+.valvula-vastago {
+  stroke:#b5a792;
+  stroke-width:3
+}
+.valvula-abierta .valvula-cuerpo {
+  fill:var(--fondo);
+  stroke:var(--rojo-cifra);
+  stroke-width:3;
+  animation:parpadeo .9s steps(2) infinite
+}
+.valvula-abierta .valvula-actuador {
+  stroke:var(--rojo-cifra)
+}
+
+/* Lecturas sobre el diagrama: unidades cqw para escalar con el lienzo */
+.lectura {
+  position:absolute;
+  display:flex;
+  flex-direction:column;
+  gap:.5cqw
+}
+.alinear-derecha {
+  align-items:flex-end;
+  text-align:right
+}
+.lectura-metano { left:23.5%; top:8.4%; width:16% }
+.lectura-presion { left:43%; top:8.4%; width:20.5% }
+.lectura-temperatura { left:3%; top:62.5%; width:21% }
+.lectura-sustrato { left:76%; top:67.2%; width:22% }
+.cifra {
+  display:flex;
+  align-items:baseline;
+  gap:.7cqw
+}
+.cifra .digitos {
+  position:relative;
+  display:inline-block;
+  font-size:4.4cqw;
+  color:var(--cifra);
+  transition:color .4s
+}
+/* Segmentos apagados detrás de la cifra, como en un display real */
+.fantasma {
+  opacity:.06;
+  color:var(--texto)
+}
+.valor {
+  position:absolute;
+  right:0;
+  top:0;
+  white-space:nowrap
+}
+.unidad {
+  font-size:2cqw;
+  font-weight:600;
+  color:var(--secundario)
+}
+.lectura-metano .unidad {
+  color:var(--cian-texto)
+}
+.nombre {
+  font-size:1.75cqw;
+  font-weight:600
+}
+.estado {
+  font-weight:700;
+  color:var(--verde-texto)
+}
+.advertencia .digitos,.advertencia .estado {
+  color:var(--ocre-texto)
+}
+.alarma .cifra .digitos {
+  color:var(--rojo-cifra);
+  animation:parpadeo 1.6s ease-in-out infinite
+}
+.alarma .estado {
+  color:var(--rojo-texto)
+}
+.actuador-valvula {
+  left:73.5%;
+  top:28%;
+  width:25%;
+  gap:.3cqw
+}
+.actuador-agitador {
+  left:30%;
+  top:92%;
+  width:40%;
+  flex-direction:row;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:baseline;
+  gap:1.2cqw
+}
+.rotulo {
+  font-size:1.6cqw;
+  font-weight:600;
+  color:var(--secundario)
+}
+.actuador-estado {
+  font-size:3.2cqw;
+  font-weight:800;
+  line-height:1
+}
+.actuador-agitador .actuador-estado {
+  font-size:2.4cqw
+}
+.actuador-valvula .estado,.actuador-agitador .estado {
+  font-size:1.6cqw
+}
+.valvula-abierta #valvula {
+  color:var(--rojo-cifra)
+}
+.rotulo-tubo {
+  position:absolute;
+  font-size:1.45cqw;
+  font-weight:600;
+  color:var(--secundario);
+  line-height:1.1
+}
+.tubo-proceso { left:2%; top:26.2% }
+.tubo-entrada { left:2%; top:79.5% }
+.tubo-atmosfera { left:90.6%; top:4.2% }
+.valvula-abierta .tubo-atmosfera {
+  color:var(--rojo-texto)
+}
+.rotulo-digestion {
+  left:41%;
+  top:63%;
+  width:18%;
+  text-align:center;
+  color:#cdbe9e;
+  opacity:.75
+}
+
+/* ---------- Registro ---------- */
+.registro {
+  flex:0 0 clamp(300px,24vw,420px);
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  padding:22px 24px;
+  border-radius:4px;
+  background:var(--panel)
+}
+.titulo-registro {
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-bottom:14px
+}
+.titulo-registro h2 {
+  font-size:28px;
+  font-weight:800;
+  line-height:1
+}
+#resumen {
+  font-size:17px;
+  font-weight:700;
+  color:var(--secundario)
+}
+#resumen.sin-alarmas {
+  color:var(--verde-texto)
+}
+#resumen.con-alarmas {
+  color:var(--rojo-texto)
+}
+#eventos {
+  list-style:none;
+  margin:0;
+  padding:0 4px 0 0;
+  flex:1 1 0;
+  min-height:0;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:14px
+}
+#eventos li {
+  display:grid;
+  grid-template-columns:20px minmax(0,1fr);
+  column-gap:10px;
+  row-gap:3px;
+  align-items:baseline
+}
+.evento-nuevo {
+  animation:entrar .5s ease-out
+}
+.ev-icono {
+  font-size:16px;
+  font-weight:800;
+  text-align:center;
+  color:var(--secundario)
+}
+#eventos time {
+  font-size:13px;
+  color:var(--secundario)
+}
+.ev-texto {
+  font-size:19px;
+  font-weight:500;
+  line-height:1.25;
+  overflow-wrap:anywhere
+}
+.ev-alarma .ev-texto { color:var(--rojo-texto) }
+.ev-alarma .ev-icono { color:var(--rojo-cifra) }
+.ev-adv .ev-texto,.ev-adv .ev-icono { color:var(--ocre-texto) }
+.ev-ok .ev-texto { color:var(--verde-claro) }
+.ev-ok .ev-icono { color:var(--verde-texto) }
+footer {
+  margin-top:16px;
+  font-size:15px;
+  font-weight:500;
+  color:var(--secundario)
+}
+
+/* ---------- Vista del ponente ---------- */
+.controles {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px 24px;
+  padding:14px 36px 18px;
+  background:var(--panel)
+}
+.controles-texto {
+  display:flex;
+  flex-direction:column;
+  gap:2px
+}
+.controles-texto strong {
+  font-size:22px;
+  font-weight:800
+}
+.controles-texto span {
+  font-size:16px;
+  font-weight:500;
+  color:var(--secundario)
+}
+.botones {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:10px
+}
+.segmentos {
+  display:inline-flex;
+  gap:4px;
+  padding:4px;
+  border-radius:4px;
+  background:var(--fondo)
+}
+button,.botones a {
+  height:48px;
+  padding:0 20px;
+  border:0;
+  border-radius:3px;
+  background:var(--boton);
+  color:var(--texto);
+  font:600 18px 'Big Shoulders','Arial Narrow',sans-serif;
+  letter-spacing:.03em;
+  text-decoration:none;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  transition:background .2s
+}
+.segmento {
+  height:44px
+}
+button:hover,.botones a:hover {
+  background:var(--boton-hover)
+}
+button:focus-visible,a:focus-visible {
+  outline:3px solid var(--ambar);
+  outline-offset:3px
+}
+button:disabled {
+  opacity:.5;
+  cursor:wait
+}
+.seg-inseguro[aria-pressed="true"] {
+  background:var(--rojo);
+  color:#fff
+}
+.seg-protegido[aria-pressed="true"] {
+  background:var(--verde);
+  color:#11170d
+}
+#reiniciar {
+  color:var(--ambar)
+}
+#reiniciar svg {
+  width:20px;
+  height:20px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round
+}
+#resultado-control {
+  flex-basis:100%;
+  font-size:16px;
+  font-weight:600;
+  color:var(--secundario)
+}
+#resultado-control:empty {
+  display:none
+}
+
+/* ---------- Animaciones ---------- */
+@keyframes fluir { to { stroke-dashoffset:-36 } }
+@keyframes ola { from { transform:translateX(0) } to { transform:translateX(-80px) } }
+@keyframes subir {
+  0% { opacity:0; transform:translateY(0) }
+  15% { opacity:.55 }
+  80% { opacity:.35 }
+  100% { opacity:0; transform:translateY(-170px) }
+}
+@keyframes aspas { 0%,100% { transform:scaleX(1) } 50% { transform:scaleX(-1) } }
+@keyframes parpadeo { 50% { opacity:.35 } }
+@keyframes pluma {
+  0% { opacity:.8; transform:translate(0,0) scale(.6) }
+  100% { opacity:0; transform:translate(14px,-46px) scale(2.2) }
+}
+@keyframes latido { 50% { filter:brightness(1.35) } }
+@keyframes rechazo { 0% { filter:brightness(1.9) } 100% { filter:brightness(1) } }
+@keyframes vineta { 50% { box-shadow:inset 0 0 0 5px var(--rojo),inset 0 0 90px 10px rgba(214,69,0,.22) } }
+@keyframes entrar { from { opacity:0; transform:translateY(-6px) } to { opacity:1; transform:none } }
+
+/* ---------- Pantallas ---------- */
+@media(min-width:1700px) {
+  h1 { font-size:56px }
+  #modo-titulo { font-size:34px }
+  .ev-texto { font-size:21px }
+}
+@media(max-height:820px) and (min-width:901px) {
+  header { padding:14px 32px 10px }
+  h1 { font-size:40px }
+  .placa-contenido { padding:9px 26px 9px 16px }
+  #modo-titulo { font-size:26px }
+  .cuerpo { padding:0 32px 14px; gap:18px }
+  .sinoptico { padding:10px }
+  .registro { padding:16px 20px }
+  .controles { padding:10px 32px 12px }
+  .ev-texto { font-size:17px }
+}
+/* En pantallas estrechas el tablero deja de ser de una sola vista y se desplaza */
+@media(max-width:900px) {
+  main { height:auto; overflow:visible }
+  header { padding:18px 16px 12px }
+  h1 { font-size:36px }
+  .placa { min-width:0; width:100% }
+  .cabecera-derecha { width:100% }
+  .enlace { align-items:flex-start }
+  .aviso,.alerta-ataque { margin:0 16px 10px }
+  .alerta-ataque p { font-size:18px }
+  .cuerpo { flex-direction:column; padding:0 16px 16px; gap:16px }
+  .sinoptico { container-type:normal; flex:none; padding:8px }
+  .lienzo { width:100% }
+  .registro { flex:none; max-height:420px }
+  #eventos { min-height:200px }
+  .controles { padding:14px 16px }
+}
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    animation:none!important;
+    transition:none!important
+  }
+}

@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Del código a la válvula · Biodigestor 01</title>
+  <link rel="icon" href="data:,">
+  <link rel="preload" href="{{ url_for('static', filename='fonts/DSEG7Classic-Bold.woff2') }}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{{ url_for('static', filename='tablero.css') }}">
+  <script defer src="{{ url_for('static', filename='tablero.js') }}"></script>
+</head>
+<body>
+<div class="vineta" aria-hidden="true"></div>
+<main>
+  <header id="cabecera">
+    <div class="marca">
+      <h1>Biodigestor <span>01</span></h1>
+      <p>Planta de biogás simulada · laboratorio local</p>
+    </div>
+    <div class="cabecera-derecha">
+      <div class="enlace">
+        <span class="digitos" id="reloj">--:--:--</span>
+        <span id="conexion" role="status">○ Conectando</span>
+      </div>
+      <div class="placa" id="modo">
+        <span class="franja" aria-hidden="true"></span>
+        <div class="placa-contenido">
+          <svg class="candado candado-abierto" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 7.6-1.7"/><path d="M12 15v2"/></svg>
+          <svg class="candado candado-cerrado" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><path d="M9.5 16l1.8 1.8 3.4-3.6"/></svg>
+          <div>
+            <strong id="modo-titulo">Conectando…</strong>
+            <span id="modo-detalle">Esperando a la planta</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div id="aviso" class="aviso" role="alert" hidden>⚠ DATOS DESACTUALIZADOS · Revisar conexión con la planta</div>
+  <div id="alerta-ataque" class="alerta-ataque" role="alert" hidden>
+    <span class="franja-peligro" aria-hidden="true"></span>
+    <p>▲ Escritura no autorizada: alguien abrió XV-201 desde la red. El biogás se está liberando a la atmósfera.</p>
+  </div>
+
+  <div class="cuerpo">
+    <section class="sinoptico" aria-label="Sinóptico de la planta">
+      <div class="lienzo">
+        <svg viewBox="0 0 1000 640" aria-hidden="true">
+          <defs>
+            <clipPath id="interior-tanque"><path d="M334 300 C334 234 666 234 666 300 L666 560 Q666 576 650 576 L350 576 Q334 576 334 560 Z"/></clipPath>
+          </defs>
+
+          <!-- Tuberías: sustrato de entrada, biogás a proceso y línea de alivio -->
+          <path class="tubo" d="M20 545 L330 545"/>
+          <path class="tubo-alma" d="M20 545 L330 545"/>
+          <path class="flujo flujo-sustrato" d="M20 545 L330 545"/>
+          <path class="tubo" d="M400 257 L400 150 L20 150"/>
+          <path class="tubo-alma" d="M400 257 L400 150 L20 150"/>
+          <path class="flujo flujo-gas" d="M400 257 L400 150 L20 150"/>
+          <path class="tubo" d="M600 257 L600 150 L880 150 L880 46"/>
+          <path class="tubo-alma" d="M600 257 L600 150 L880 150 L880 46"/>
+          <path class="flujo flujo-alivio" d="M600 257 L600 150 L880 150 L880 46"/>
+          <path class="boca" d="M866 46 L894 46"/>
+          <g class="pluma">
+            <circle class="p1" cx="880" cy="40" r="7"/>
+            <circle class="p2" cx="876" cy="40" r="6"/>
+            <circle class="p3" cx="884" cy="40" r="8"/>
+            <circle class="p4" cx="880" cy="40" r="6"/>
+          </g>
+
+          <!-- Biodigestor: el nivel de sustrato y la tinta del gas los mueve tablero.js -->
+          <path class="pared" d="M330 300 C330 228 670 228 670 300 L670 562 Q670 580 652 580 L348 580 Q330 580 330 562 Z"/>
+          <g clip-path="url(#interior-tanque)">
+            <rect class="espacio-gas" id="espacio-gas" x="330" y="200" width="340" height="380"/>
+            <g id="nivel-sustrato" transform="translate(334 358)">
+              <g class="ola">
+                <path class="sustrato" d="M-80 0 q20 -7 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 L440 340 L-80 340 Z"/>
+                <path class="sustrato-superficie" d="M-80 0 q20 -7 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0"/>
+              </g>
+            </g>
+            <circle class="burbuja-gas b1" cx="372" cy="566" r="4"/>
+            <circle class="burbuja-gas b2" cx="418" cy="570" r="3"/>
+            <circle class="burbuja-gas b3" cx="456" cy="562" r="5"/>
+            <circle class="burbuja-gas b4" cx="548" cy="568" r="3.5"/>
+            <circle class="burbuja-gas b5" cx="590" cy="564" r="4.5"/>
+            <circle class="burbuja-gas b6" cx="628" cy="570" r="3"/>
+            <circle class="burbuja-gas b7" cx="520" cy="566" r="2.5"/>
+          </g>
+          <path class="pared-brillo" d="M344 300 C344 244 656 244 656 300"/>
+
+          <!-- M-202: el giro de las aspas se simula invirtiendo su ancho -->
+          <line class="eje" x1="500" y1="236" x2="500" y2="524"/>
+          <g transform="translate(500 524)">
+            <g class="aspas" id="rotor">
+              <rect x="-62" y="-5" width="124" height="10" rx="3"/>
+              <rect x="-6" y="-12" width="12" height="24" rx="2"/>
+            </g>
+          </g>
+          <circle class="motor" cx="500" cy="216" r="20"/>
+          <text class="motor-letra" x="500" y="222">M</text>
+
+          <!-- XV-201 -->
+          <g class="simbolo-valvula">
+            <line class="valvula-vastago" x1="780" y1="150" x2="780" y2="118"/>
+            <path class="valvula-actuador" d="M762 118 A18 18 0 0 1 798 118 Z"/>
+            <polygon class="valvula-cuerpo" points="756,132 756,168 780,150"/>
+            <polygon class="valvula-cuerpo" points="804,132 804,168 780,150"/>
+          </g>
+
+          <!-- Instrumentos con etiqueta ISA -->
+          <line class="senal" x1="200" y1="121" x2="200" y2="150"/>
+          <circle class="instrumento" id="instrumento-metano" cx="200" cy="95" r="27"/>
+          <text class="instrumento-texto" x="200" y="93">AT</text>
+          <text class="instrumento-numero" x="200" y="110">103</text>
+          <line class="senal" x1="680" y1="121" x2="680" y2="150"/>
+          <circle class="instrumento" id="instrumento-presion" cx="680" cy="95" r="27"/>
+          <text class="instrumento-texto" x="680" y="93">PT</text>
+          <text class="instrumento-numero" x="680" y="110">102</text>
+          <line class="senal" x1="302" y1="440" x2="330" y2="440"/>
+          <circle class="instrumento" id="instrumento-temperatura" cx="275" cy="440" r="27"/>
+          <text class="instrumento-texto" x="275" y="438">TT</text>
+          <text class="instrumento-numero" x="275" y="455">101</text>
+          <line class="senal" x1="670" y1="470" x2="698" y2="470"/>
+          <circle class="instrumento" id="instrumento-sustrato" cx="725" cy="470" r="27"/>
+          <text class="instrumento-texto" x="725" y="468">LT</text>
+          <text class="instrumento-numero" x="725" y="485">104</text>
+        </svg>
+
+        {% for campo, nombre, unidad, fantasma, lado in [('metano','Metano','% CH₄','88.8','izquierda'),('presion','Presión','bar','8.88','derecha'),('temperatura','Temperatura','°C','88.8','derecha'),('sustrato','Sustrato','%','88.8','izquierda')] %}
+        <div class="lectura lectura-{{ campo }} alinear-{{ lado }}" id="tarjeta-{{ campo }}">
+          <div class="cifra">
+            <span class="digitos"><span class="fantasma" aria-hidden="true">{{ fantasma }}</span><span class="valor" id="{{ campo }}">—</span></span>
+            <span class="unidad">{{ unidad }}</span>
+          </div>
+          <span class="nombre">{{ nombre }} <span class="estado" id="estado-{{ campo }}">○ Sin datos</span></span>
+        </div>
+        {% endfor %}
+
+        <div class="lectura actuador-valvula" id="tarjeta-valvula">
+          <span class="rotulo">XV-201 · Válvula de alivio</span>
+          <span class="actuador-estado" id="valvula">—</span>
+          <span class="estado" id="estado-valvula">○ Sin datos</span>
+        </div>
+        <div class="lectura actuador-agitador" id="tarjeta-agitador">
+          <span class="rotulo">M-202 · Agitador</span>
+          <span class="actuador-estado" id="agitador">—</span>
+          <span class="estado" id="estado-agitador">○ Sin datos</span>
+        </div>
+
+        <span class="rotulo-tubo tubo-proceso">Biogás a proceso ←</span>
+        <span class="rotulo-tubo tubo-entrada">→ Entrada de sustrato</span>
+        <span class="rotulo-tubo tubo-atmosfera">Alivio a<br>atmósfera</span>
+        <span class="rotulo-tubo rotulo-digestion">Digestión anaerobia</span>
+      </div>
+    </section>
+
+    <aside class="registro" aria-label="Registro de eventos">
+      <div class="titulo-registro"><h2>Registro</h2><span id="resumen">Esperando telemetría</span></div>
+      <ol id="eventos" aria-label="Eventos más recientes primero"><li class="ev-sis"><span class="ev-icono" aria-hidden="true">○</span><span></span><span></span><span class="ev-texto">Estableciendo conexión local…</span></li></ol>
+      <footer>Todos los equipos son simulados · <span id="revision">PLC local</span></footer>
+    </aside>
+  </div>
+
+  {% if ponente %}
+  <section class="controles" aria-label="Controles del ponente">
+    <div class="controles-texto"><strong>Vista del ponente</strong><span>Del código a la válvula · proyecta el tablero de audiencia en otra ventana</span></div>
+    <div class="botones">
+      <div class="segmentos" role="group" aria-label="Modo de la planta">
+        <button class="segmento seg-inseguro" data-modo="inseguro" aria-pressed="false">Modo inseguro</button>
+        <button class="segmento seg-protegido" data-modo="protegido" aria-pressed="false">Modo protegido</button>
+      </div>
+      <button id="reiniciar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Reiniciar planta</button>
+      <a href="/" target="_blank" rel="noopener">Abrir tablero ↗</a>
+    </div>
+    <p id="resultado-control" role="status"></p>
+  </section>
+  {% endif %}
+</main>
+</body></html>

@@ -1,0 +1,11 @@
+.venv
+.git
+__pycache__
+.pytest_cache
+.env
+*.tar
+artifacts
+node_modules
+**/__pycache__
+**/*.pyc
+*.log

@@ -1,0 +1,6 @@
+{
+  "name": "codigo-valvula-verificacion",
+  "private": true,
+  "scripts": {"test:e2e": "node tests/navegador.cjs", "test:restart": "node tests/reinicio.cjs"},
+  "devDependencies": {"playwright": "1.61.1"}
+}

@@ -1,0 +1,35 @@
+name: codigo-valvula-demo
+services:
+  planta:
+    image: codigo-valvula-demo:1.0.0
+    pull_policy: never
+    build: .
+    environment:
+      MODO: ${MODO:-inseguro}
+      TOKEN_DEMO: ${TOKEN_DEMO:-valvula-laboratorio-local}
+      TEMP_ALARMA_BAJA: ${TEMP_ALARMA_BAJA:-30}
+      TEMP_NORMAL_BAJA: ${TEMP_NORMAL_BAJA:-35}
+      TEMP_NORMAL_ALTA: ${TEMP_NORMAL_ALTA:-40}
+      TEMP_ALARMA_ALTA: ${TEMP_ALARMA_ALTA:-45}
+      PRESION_ALARMA_BAJA: ${PRESION_ALARMA_BAJA:-0.8}
+      PRESION_NORMAL_BAJA: ${PRESION_NORMAL_BAJA:-1}
+      PRESION_NORMAL_ALTA: ${PRESION_NORMAL_ALTA:-1.6}
+      PRESION_ALARMA_ALTA: ${PRESION_ALARMA_ALTA:-2}
+    ports:
+      - "127.0.0.1:${PUERTO_WEB_HOST:-18473}:18473"
+      - "127.0.0.1:${PUERTO_MODBUS_HOST:-18524}:18524"
+    networks:
+      - laboratorio
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    stop_grace_period: 15s
+    healthcheck:
+      test: ["CMD", "python", "-c", "from urllib.request import urlopen; urlopen('http://127.0.0.1:18473/api/salud',timeout=2).read()"]
+      interval: 5s
+      timeout: 3s
+      start_period: 10s
+      retries: 3
+networks:
+  laboratorio:
+    driver: bridge
